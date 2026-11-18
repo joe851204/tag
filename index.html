@@ -59,9 +59,10 @@
   h1 { margin: 14px 0 6px; font-size: 25px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
   .sub { margin: 0; font-size: 14.5px; line-height: 1.55; opacity: .92; }
 
-  .lang { display: inline-block; margin-top: 12px; border: 1px solid var(--line); cursor: pointer;
-    background: transparent; color: var(--muted); font: 600 12px/1 inherit; padding: 7px 11px; border-radius: 999px;
-    font-family: inherit; backdrop-filter: blur(6px); }
+  .seg { display: inline-flex; margin-top: 14px; padding: 3px; gap: 2px; border-radius: 999px; background: var(--chip); }
+  .seg button { border: 0; background: transparent; color: var(--muted); font: 600 12.5px/1 inherit; font-family: inherit;
+    padding: 8px 13px; border-radius: 999px; cursor: pointer; }
+  .seg button.on { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 
   .body { padding: 22px 22px 8px; }
   .owner { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
@@ -79,6 +80,8 @@
     background: var(--ink); padding: 16px 18px; border-radius: 18px; margin-bottom: 12px;
     transition: transform .15s ease; }
   @media (prefers-color-scheme: dark) { .call { background: var(--accent); } }
+  .call.wa, .call.wa:visited { background: #1a9e4f; }
+  .call.wa .ic svg { width: 23px; height: 23px; }
   .call:active, .act:active, .row:active { transform: scale(.97); }
   .call .ic { width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,.14); display: grid; place-items: center; }
   .call .ic svg { width: 21px; height: 21px; }
@@ -136,7 +139,7 @@
       <div class="acts" id="acts"></div>
       <div class="rows" id="rows"></div>
     </section>
-    <footer class="foot"><div id="t-foot"></div><button class="lang" id="langBtn">EN</button></footer>
+    <footer class="foot"><div id="t-foot"></div><div class="seg"><button data-l="zh">中文</button><button data-l="en">EN</button><button data-l="ja">日本語</button></div></footer>
   </main>
 </div>
 <div class="toast" id="toast"></div>
@@ -146,7 +149,7 @@
    ✏️  在這裡改資料（不需要的欄位留空字串 "" 就會自動隱藏）
    ============================================================ */
 const INFO = {
-  name:     "Joe.Tsai",
+  name:     "Joe Tsai",
   phone:    "+886 988 947 626",
   email:    "joe871217@gmail.com",
   line:     "",                      // LINE ID
@@ -155,20 +158,26 @@ const INFO = {
   backupPhone: "",
   msgZh: "如果您撿到這件行李，麻煩聯絡我，非常感謝您！",
   msgEn: "If you found this luggage, please contact me. Thank you so much!",
+  msgJa: "この荷物を見つけた方は、ご連絡いただけますと幸いです。本当にありがとうございます！",
 };
 /* ============================================================ */
 
 const T = {
   zh: { tag:"Lost & Found", title:"您找到了我的行李", sub:"謝謝您願意幫忙！請用下方任一方式聯絡我。",
-        owner:"行李主人", call:"打電話給我", sms:"簡訊", mail:"Email", line:"LINE", wa:"WhatsApp", save:"存聯絡人",
+        owner:"行李主人", primary:"用 WhatsApp 聯絡我", primarySub:"免費網路通話・傳訊息", call:"打電話", sms:"簡訊", mail:"Email", line:"LINE", wa:"WhatsApp", save:"存聯絡人",
         kPhone:"電話", kMail:"Email", kBackup:"備用聯絡", copied:"已複製 ✓", tapCopy:"點一下即可複製",
-        foot:"<b>真心感謝您的善意</b><br>此頁面僅供歸還遺失行李使用", btn:"EN",
+        foot:"<b>真心感謝您的善意</b><br>此頁面僅供歸還遺失行李使用",
         smsBody:"您好，我撿到您的行李。", mailSubj:"我撿到您的行李" },
   en: { tag:"Lost & Found", title:"You found my luggage", sub:"Thank you for helping! Reach me any way below.",
-        owner:"Owner", call:"Call me", sms:"SMS", mail:"Email", line:"LINE", wa:"WhatsApp", save:"Save",
+        owner:"Owner", primary:"Message me on WhatsApp", primarySub:"Free · internet call or chat", call:"Call", sms:"SMS", mail:"Email", line:"LINE", wa:"WhatsApp", save:"Save",
         kPhone:"Phone", kMail:"Email", kBackup:"Backup", copied:"Copied ✓", tapCopy:"Tap to copy",
-        foot:"<b>Thank you for your kindness</b><br>This page is only for returning lost luggage", btn:"中文",
+        foot:"<b>Thank you for your kindness</b><br>This page is only for returning lost luggage",
         smsBody:"Hi, I found your luggage.", mailSubj:"I found your luggage" },
+  ja: { tag:"Lost & Found", title:"私の荷物です", sub:"見つけてくださりありがとうございます！下記のいずれかの方法でご連絡ください。",
+        owner:"持ち主", primary:"WhatsApp で連絡する", primarySub:"無料・ネット通話／メッセージ", call:"電話", sms:"SMS", mail:"メール", line:"LINE", wa:"WhatsApp", save:"連絡先保存",
+        kPhone:"電話", kMail:"メール", kBackup:"予備連絡先", copied:"コピーしました ✓", tapCopy:"タップでコピー",
+        foot:"<b>ご親切に心より感謝いたします</b><br>このページは紛失した荷物の返却専用です",
+        smsBody:"こんにちは。あなたの荷物を見つけました。", mailSubj:"荷物を見つけました" },
 };
 
 const I = {
@@ -184,7 +193,8 @@ const I = {
 
 const $ = id => document.getElementById(id);
 const tel = s => s.replace(/[^\d+]/g, "");
-let lang = (navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+const nl = (navigator.language || "").toLowerCase();
+let lang = nl.startsWith("zh") ? "zh" : nl.startsWith("ja") ? "ja" : "en";
 
 function toast(msg) {
   const t = $("toast"); t.textContent = msg; t.classList.add("on");
@@ -221,27 +231,28 @@ function row(k, v, copyVal) {
 
 function render() {
   const t = T[lang];
-  document.documentElement.lang = lang === "zh" ? "zh-Hant" : "en";
+  document.documentElement.lang = { zh:"zh-Hant", en:"en", ja:"ja" }[lang];
+  document.querySelectorAll(".seg button").forEach(b => b.classList.toggle("on", b.dataset.l === lang));
   ["tag","title","sub","owner"].forEach(k => $("t-"+k).textContent = t[k]);
   $("t-foot").innerHTML = t.foot;
-  $("langBtn").textContent = t.btn;
   $("name").textContent = INFO.name;
   $("avatar").textContent = INFO.name.trim().charAt(0).toUpperCase();
-  $("msg").textContent = lang === "zh" ? INFO.msgZh : INFO.msgEn;
+  $("msg").textContent = { zh: INFO.msgZh, en: INFO.msgEn, ja: INFO.msgJa }[lang];
 
   const p = $("primary"); p.innerHTML = "";
-  if (INFO.phone) {
+  // 主要按鈕：優先使用免費的網路通訊（WhatsApp），避免對方付國際電話費
+  if (INFO.whatsapp) {
     const a = document.createElement("a");
-    a.className = "call"; a.href = `tel:${tel(INFO.phone)}`;
-    a.innerHTML = `<span class="ic">${I.phone}</span><span><b>${t.call}</b><span class="num">${INFO.phone}</span></span><span class="arr">${I.arr}</span>`;
+    a.className = "call wa"; a.href = `https://wa.me/${INFO.whatsapp}?text=${encodeURIComponent(t.smsBody)}`;
+    a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = `<span class="ic">${I.wa}</span><span><b>${t.primary}</b><span class="num">${t.primarySub}</span></span><span class="arr">${I.arr}</span>`;
     p.append(a);
   }
 
   const acts = $("acts"); acts.innerHTML = "";
-  if (INFO.phone) acts.append(act(`sms:${tel(INFO.phone)}?&body=${encodeURIComponent(t.smsBody)}`, I.sms, t.sms, "#5b6cff"));
-  if (INFO.whatsapp) acts.append(act(`https://wa.me/${INFO.whatsapp}?text=${encodeURIComponent(t.smsBody)}`, I.wa, t.wa, "var(--wa)"));
   if (INFO.line) acts.append(act(`https://line.me/ti/p/~${encodeURIComponent(INFO.line)}`, I.line, t.line, "var(--line-green)"));
   if (INFO.email) acts.append(act(`mailto:${INFO.email}?subject=${encodeURIComponent(t.mailSubj)}`, I.mail, t.mail, "#e8a33d"));
+  if (INFO.phone) acts.append(act(`tel:${tel(INFO.phone)}`, I.phone, t.call, "#5b6cff"));
   if (INFO.phone || INFO.email) { const b = act(null, I.save, t.save, "#1b2130"); b.onclick = vcard; acts.append(b); }
 
   const rows = $("rows"); rows.innerHTML = "";
@@ -250,7 +261,7 @@ function render() {
   if (INFO.backupPhone) rows.append(row(t.kBackup, `${INFO.backupName ? INFO.backupName + " · " : ""}${INFO.backupPhone}`, tel(INFO.backupPhone)));
 }
 
-$("langBtn").onclick = () => { lang = lang === "zh" ? "en" : "zh"; render(); };
+document.querySelectorAll(".seg button").forEach(b => b.onclick = () => { lang = b.dataset.l; render(); });
 render();
 </script>
 </body>
