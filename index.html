@@ -2,156 +2,255 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- 不讓搜尋引擎收錄這頁 -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f3eee4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14171f" media="(prefers-color-scheme: dark)">
 <title>Lost Luggage · 行李失物聯絡</title>
 <style>
   :root {
-    --bg: #f4f1ea; --card: #ffffff; --ink: #1d2433; --muted: #6b7280;
-    --accent: #e8590c; --accent-ink: #ffffff; --line: #e5e1d8;
+    --bg: #f3eee4; --bg2: #e9e1d2;
+    --card: #fffdf8; --ink: #1b2130; --muted: #7a7f8c; --line: #ebe4d6;
+    --accent: #e4572e; --accent2: #f08a4b; --accent-ink: #fff;
+    --chip: #f6f1e7; --shadow: 0 1px 2px rgba(27,33,48,.06), 0 18px 40px -12px rgba(27,33,48,.22);
+    --wa: #25d366; --line-green: #06c755;
   }
-  * { box-sizing: border-box; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171f; --bg2: #0e1016;
+      --card: #1d212c; --ink: #eef0f5; --muted: #9399a8; --line: #2b3040;
+      --chip: #262b38; --shadow: 0 18px 40px -12px rgba(0,0,0,.6);
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
   body {
-    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-    display: flex; justify-content: center; padding: 24px 16px 40px;
+    min-height: 100dvh; color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 50% -10%, var(--bg2), transparent 60%),
+      var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: max(28px, env(safe-area-inset-top)) 18px max(32px, env(safe-area-inset-bottom));
   }
-  .card {
-    width: 100%; max-width: 420px; background: var(--card); border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,.08); overflow: hidden;
+
+  /* ---------- 吊繩 + 吊牌 ---------- */
+  .wrap { width: 100%; max-width: 400px; position: relative; padding-top: 46px;
+    filter: drop-shadow(0 18px 28px rgba(27,33,48,.18)) drop-shadow(0 2px 3px rgba(27,33,48,.08));
+    animation: drop .7s cubic-bezier(.2,.9,.3,1.2) both; transform-origin: 50% 0; }
+  .string { position: absolute; top: 0; left: 50%; width: 3px; height: 70px; margin-left: -1.5px;
+    background: repeating-linear-gradient(180deg, #b98b54 0 4px, #9c7140 4px 8px); border-radius: 2px; z-index: 2; }
+  .tag {
+    position: relative; background: var(--card); border-radius: 26px 26px 22px 22px;
+    overflow: hidden;
+    clip-path: polygon(24% 0, 76% 0, 100% 64px, 100% 100%, 0 100%, 0 64px);
   }
-  .head {
-    background: var(--ink); color: #fff; padding: 28px 24px 24px;
-    position: relative;
-  }
-  .head::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 14px;
-    background: radial-gradient(circle at 7px 0, transparent 6px, var(--card) 6.5px) repeat-x;
-    background-size: 14px 14px;
-  }
-  .tag { display: inline-block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-    background: var(--accent); color: var(--accent-ink); padding: 4px 10px; border-radius: 999px; }
-  h1 { margin: 14px 0 4px; font-size: 26px; line-height: 1.25; }
-  .sub { margin: 0; color: #cbd2de; font-size: 15px; line-height: 1.5; }
-  .body { padding: 26px 24px 8px; }
-  .owner { font-size: 13px; color: var(--muted); margin: 0 0 2px; }
-  .name { font-size: 22px; font-weight: 700; margin: 0 0 16px; }
-  .msg { background: #fff7ed; border-left: 4px solid var(--accent); padding: 12px 14px;
-    border-radius: 8px; font-size: 15px; line-height: 1.6; margin-bottom: 22px; }
+  .hole { position: absolute; top: 18px; left: 50%; width: 26px; height: 26px; margin-left: -13px;
+    border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 4px #c9a46f, inset 0 2px 4px rgba(0,0,0,.25); z-index: 3; }
+
+  .top { padding: 62px 26px 24px; text-align: center;
+    background: linear-gradient(160deg, var(--accent) 0%, var(--accent2) 100%); color: var(--accent-ink); position: relative; }
+  .top::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.55) 0 8px, transparent 8px 14px); }
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+    letter-spacing: .16em; text-transform: uppercase; background: rgba(255,255,255,.18);
+    padding: 5px 11px; border-radius: 999px; }
+  .badge svg { width: 13px; height: 13px; }
+  h1 { margin: 14px 0 6px; font-size: 25px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
+  .sub { margin: 0; font-size: 14.5px; line-height: 1.55; opacity: .92; }
+
+  .lang { display: inline-block; margin-top: 12px; border: 1px solid var(--line); cursor: pointer;
+    background: transparent; color: var(--muted); font: 600 12px/1 inherit; padding: 7px 11px; border-radius: 999px;
+    font-family: inherit; backdrop-filter: blur(6px); }
+
+  .body { padding: 22px 22px 8px; }
+  .owner { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .avatar { width: 52px; height: 52px; flex: none; border-radius: 16px; display: grid; place-items: center;
+    background: var(--chip); color: var(--accent); font-weight: 800; font-size: 20px; }
+  .owner small { display: block; font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .owner strong { display: block; font-size: 21px; margin-top: 2px; }
+
+  .msg { font-size: 14.5px; line-height: 1.65; color: var(--ink); background: var(--chip);
+    padding: 13px 15px; border-radius: 14px; margin: 0 0 18px; position: relative; }
   .msg:empty { display: none; }
-  .btns { display: grid; gap: 10px; }
-  a.btn, button.btn {
-    display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px;
-    border-radius: 12px; border: 1px solid var(--line); background: #fff; color: var(--ink);
-    text-decoration: none; font-size: 16px; font-family: inherit; cursor: pointer; text-align: left;
-  }
-  a.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
-  .btn .ic { width: 22px; text-align: center; font-size: 18px; flex: none; }
-  .btn .lbl { flex: 1; }
-  .btn .val { font-size: 13px; opacity: .75; }
-  .foot { padding: 18px 24px 24px; color: var(--muted); font-size: 12px; text-align: center; line-height: 1.6; }
-  .lang { position: absolute; top: 20px; right: 20px; background: transparent; color: #fff;
-    border: 1px solid rgba(255,255,255,.4); border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer; }
+
+  /* 主要按鈕 */
+  .call { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--accent-ink);
+    background: var(--ink); padding: 16px 18px; border-radius: 18px; margin-bottom: 12px;
+    transition: transform .15s ease; }
+  @media (prefers-color-scheme: dark) { .call { background: var(--accent); } }
+  .call:active, .act:active, .row:active { transform: scale(.97); }
+  .call .ic { width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,.14); display: grid; place-items: center; }
+  .call .ic svg { width: 21px; height: 21px; }
+  .call b { display: block; font-size: 16.5px; }
+  .call .num { display: block; font-size: 13px; opacity: .72; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .call .arr { margin-left: auto; opacity: .6; }
+
+  /* 圖示按鈕列 */
+  .acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .act { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 6px 12px;
+    border-radius: 16px; background: var(--chip); color: var(--ink); text-decoration: none;
+    font-size: 12.5px; line-height: 16px; font-weight: 600; border: 0; font-family: inherit; cursor: pointer; transition: transform .15s ease; }
+  .act .ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: #fff; }
+  .act .ic svg { width: 20px; height: 20px; }
+
+  /* 資訊列 */
+  .rows { border-top: 1px dashed var(--line); margin-top: 6px; padding-top: 6px; }
+  .row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border: 0; background: none; width: 100%;
+    color: var(--ink); font-family: inherit; text-align: left; cursor: pointer; transition: transform .15s ease; }
+  .row + .row { border-top: 1px solid var(--line); }
+  .row .k { font-size: 12px; color: var(--muted); width: 64px; flex: none; }
+  .row .v { flex: 1; font-size: 14.5px; word-break: break-all; font-variant-numeric: tabular-nums; }
+  .row svg { width: 17px; height: 17px; color: var(--muted); flex: none; }
+
+  .foot { text-align: center; color: var(--muted); font-size: 12px; line-height: 1.6; padding: 14px 24px 22px; }
+  .foot b { color: var(--ink); font-weight: 600; }
+
+  .toast { position: fixed; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
+    background: var(--ink); color: var(--card); padding: 10px 16px; border-radius: 999px; font-size: 14px;
+    opacity: 0; transition: .25s ease; pointer-events: none; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  @keyframes drop { 0% { opacity: 0; transform: translateY(-24px) rotate(-4deg); }
+    60% { opacity: 1; transform: translateY(0) rotate(1.5deg); } 100% { transform: rotate(0); } }
+  @media (prefers-reduced-motion: reduce) { .wrap { animation: none; } }
 </style>
 </head>
 <body>
-<main class="card">
-  <header class="head">
-    <button class="lang" id="langBtn">EN</button>
-    <span class="tag" id="t-tag"></span>
-    <h1 id="t-title"></h1>
-    <p class="sub" id="t-sub"></p>
-  </header>
-  <section class="body">
-    <p class="owner" id="t-owner"></p>
-    <p class="name" id="name"></p>
-    <div class="msg" id="msg"></div>
-    <div class="btns" id="btns"></div>
-  </section>
-  <footer class="foot" id="t-foot"></footer>
-</main>
+<div class="wrap">
+  <div class="string"></div>
+  <main class="tag">
+    <div class="hole"></div>
+    <header class="top">
+      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M9 7V4h6v3M9 20v1M15 20v1"/></svg><span id="t-tag"></span></span>
+      <h1 id="t-title"></h1>
+      <p class="sub" id="t-sub"></p>
+    </header>
+    <section class="body">
+      <div class="owner">
+        <div class="avatar" id="avatar"></div>
+        <div><small id="t-owner"></small><strong id="name"></strong></div>
+      </div>
+      <p class="msg" id="msg"></p>
+      <div id="primary"></div>
+      <div class="acts" id="acts"></div>
+      <div class="rows" id="rows"></div>
+    </section>
+    <footer class="foot"><div id="t-foot"></div><button class="lang" id="langBtn">EN</button></footer>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
 /* ============================================================
-   ✏️  在這裡填你的資料（不需要的欄位留空字串 "" 就會自動隱藏）
+   ✏️  在這裡改資料（不需要的欄位留空字串 "" 就會自動隱藏）
    ============================================================ */
 const INFO = {
-  name:     "Joe.Tsai",              // 顯示的名字
-  phone:    "+886 988 947 626",      // 手機，請加國碼 +886，去掉開頭的 0
+  name:     "Joe.Tsai",
+  phone:    "+886 988 947 626",
   email:    "joe871217@gmail.com",
-  line:     "",                      // LINE ID，例如 "cheerful123"
-  whatsapp: "886988947626",                   // WhatsApp 號碼，只填數字含國碼，例如 "886912345678"
-  backupName:  "",                   // 備用聯絡人名字
-  backupPhone: "",                   // 備用聯絡人電話
+  line:     "",                      // LINE ID
+  whatsapp: "886988947626",          // 只填數字含國碼
+  backupName:  "",
+  backupPhone: "",
   msgZh: "如果您撿到這件行李，麻煩聯絡我，非常感謝您！",
   msgEn: "If you found this luggage, please contact me. Thank you so much!",
 };
 /* ============================================================ */
 
 const T = {
-  zh: { tag:"Lost & Found", title:"您找到了我的行李", sub:"謝謝您願意幫忙！請用下面任一方式聯絡我。",
-        owner:"行李主人", call:"打電話", sms:"傳簡訊", mail:"寄 Email", line:"LINE", wa:"WhatsApp",
-        backup:"備用聯絡人", save:"儲存聯絡人", foot:"此頁面僅供行李遺失時聯絡使用。", btn:"EN",
+  zh: { tag:"Lost & Found", title:"您找到了我的行李", sub:"謝謝您願意幫忙！請用下方任一方式聯絡我。",
+        owner:"行李主人", call:"打電話給我", sms:"簡訊", mail:"Email", line:"LINE", wa:"WhatsApp", save:"存聯絡人",
+        kPhone:"電話", kMail:"Email", kBackup:"備用聯絡", copied:"已複製 ✓", tapCopy:"點一下即可複製",
+        foot:"<b>真心感謝您的善意</b><br>此頁面僅供歸還遺失行李使用", btn:"EN",
         smsBody:"您好，我撿到您的行李。", mailSubj:"我撿到您的行李" },
-  en: { tag:"Lost & Found", title:"You found my luggage", sub:"Thank you for helping! Please reach me any way below.",
-        owner:"Owner", call:"Call", sms:"Send SMS", mail:"Send Email", line:"LINE", wa:"WhatsApp",
-        backup:"Backup contact", save:"Save contact", foot:"This page is only for returning lost luggage.", btn:"中文",
+  en: { tag:"Lost & Found", title:"You found my luggage", sub:"Thank you for helping! Reach me any way below.",
+        owner:"Owner", call:"Call me", sms:"SMS", mail:"Email", line:"LINE", wa:"WhatsApp", save:"Save",
+        kPhone:"Phone", kMail:"Email", kBackup:"Backup", copied:"Copied ✓", tapCopy:"Tap to copy",
+        foot:"<b>Thank you for your kindness</b><br>This page is only for returning lost luggage", btn:"中文",
         smsBody:"Hi, I found your luggage.", mailSubj:"I found your luggage" },
 };
 
+const I = {
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
+  sms:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.2.5.1.6 0l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.1z"/></svg>',
+  line:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5 1.1-.5 5.8-3.4 7.9-5.8C21.3 14.4 22 12.8 22 11c0-4.4-4.5-8-10-8zM8 13.4H6.1c-.3 0-.5-.2-.5-.5V9.1c0-.3.2-.5.5-.5s.5.2.5.5v3.3H8c.3 0 .5.2.5.5s-.2.5-.5.5zm2-.5c0 .3-.2.5-.5.5s-.5-.2-.5-.5V9.1c0-.3.2-.5.5-.5s.5.2.5.5v3.8zm4.6 0c0 .2-.1.4-.3.5h-.2c-.2 0-.3-.1-.4-.2l-2-2.7v2.4c0 .3-.2.5-.5.5s-.5-.2-.5-.5V9.1c0-.2.1-.4.3-.5h.2c.2 0 .3.1.4.2l2 2.7V9.1c0-.3.2-.5.5-.5s.5.2.5.5v3.8zm3.1-2.4c.3 0 .5.2.5.5s-.2.5-.5.5h-1.4v.9h1.4c.3 0 .5.2.5.5s-.2.5-.5.5h-1.9c-.3 0-.5-.2-.5-.5V9.1c0-.3.2-.5.5-.5h1.9c.3 0 .5.2.5.5s-.2.5-.5.5h-1.4v.9h1.4z"/></svg>',
+  save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  arr:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+};
+
+const $ = id => document.getElementById(id);
 const tel = s => s.replace(/[^\d+]/g, "");
 let lang = (navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en";
 
-function btn(href, ic, lbl, val, primary) {
-  const a = document.createElement("a");
-  a.className = "btn" + (primary ? " primary" : "");
-  a.href = href;
-  if (href.startsWith("http")) { a.target = "_blank"; a.rel = "noopener"; }
-  a.innerHTML = `<span class="ic">${ic}</span><span class="lbl">${lbl}</span>` + (val ? `<span class="val">${val}</span>` : "");
-  return a;
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 1400);
 }
-
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const a = document.createElement("textarea"); a.value = text; document.body.append(a); a.select(); document.execCommand("copy"); a.remove(); }
+  toast(T[lang].copied);
+}
 function vcard() {
-  const lines = ["BEGIN:VCARD", "VERSION:3.0", `FN:${INFO.name}`, `N:;${INFO.name};;;`];
-  if (INFO.phone) lines.push(`TEL;TYPE=CELL:${tel(INFO.phone)}`);
-  if (INFO.email) lines.push(`EMAIL:${INFO.email}`);
-  lines.push("NOTE:Luggage owner", "END:VCARD");
-  const blob = new Blob([lines.join("\r\n")], { type: "text/vcard" });
+  const v = ["BEGIN:VCARD","VERSION:3.0",`FN:${INFO.name}`,`N:;${INFO.name};;;`];
+  if (INFO.phone) v.push(`TEL;TYPE=CELL:${tel(INFO.phone)}`);
+  if (INFO.email) v.push(`EMAIL:${INFO.email}`);
+  v.push("NOTE:Luggage owner","END:VCARD");
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `${INFO.name}.vcf`;
-  a.click();
+  a.href = URL.createObjectURL(new Blob([v.join("\r\n")], { type: "text/vcard" }));
+  a.download = `${INFO.name}.vcf`; a.click();
+}
+function act(href, icon, label, color) {
+  const el = document.createElement(href ? "a" : "button");
+  el.className = "act";
+  if (href) { el.href = href; if (href.startsWith("http")) { el.target = "_blank"; el.rel = "noopener"; } }
+  el.innerHTML = `<span class="ic" style="background:${color}">${icon}</span>${label}`;
+  return el;
+}
+function row(k, v, copyVal) {
+  const b = document.createElement("button");
+  b.className = "row"; b.setAttribute("aria-label", T[lang].tapCopy);
+  b.innerHTML = `<span class="k">${k}</span><span class="v">${v}</span>${I.copy}`;
+  b.onclick = () => copy(copyVal || v);
+  return b;
 }
 
 function render() {
   const t = T[lang];
   document.documentElement.lang = lang === "zh" ? "zh-Hant" : "en";
-  for (const k of ["tag","title","sub","owner","foot"]) document.getElementById("t-"+k).textContent = t[k];
-  document.getElementById("langBtn").textContent = t.btn;
-  document.getElementById("name").textContent = INFO.name;
-  document.getElementById("msg").textContent = lang === "zh" ? INFO.msgZh : INFO.msgEn;
+  ["tag","title","sub","owner"].forEach(k => $("t-"+k).textContent = t[k]);
+  $("t-foot").innerHTML = t.foot;
+  $("langBtn").textContent = t.btn;
+  $("name").textContent = INFO.name;
+  $("avatar").textContent = INFO.name.trim().charAt(0).toUpperCase();
+  $("msg").textContent = lang === "zh" ? INFO.msgZh : INFO.msgEn;
 
-  const box = document.getElementById("btns");
-  box.innerHTML = "";
+  const p = $("primary"); p.innerHTML = "";
   if (INFO.phone) {
-    box.append(btn(`tel:${tel(INFO.phone)}`, "📞", t.call, INFO.phone, true));
-    box.append(btn(`sms:${tel(INFO.phone)}?&body=${encodeURIComponent(t.smsBody)}`, "💬", t.sms));
+    const a = document.createElement("a");
+    a.className = "call"; a.href = `tel:${tel(INFO.phone)}`;
+    a.innerHTML = `<span class="ic">${I.phone}</span><span><b>${t.call}</b><span class="num">${INFO.phone}</span></span><span class="arr">${I.arr}</span>`;
+    p.append(a);
   }
-  if (INFO.email) box.append(btn(`mailto:${INFO.email}?subject=${encodeURIComponent(t.mailSubj)}`, "✉️", t.mail, INFO.email));
-  if (INFO.line) box.append(btn(`https://line.me/ti/p/~${encodeURIComponent(INFO.line)}`, "🟢", t.line, INFO.line));
-  if (INFO.whatsapp) box.append(btn(`https://wa.me/${INFO.whatsapp}?text=${encodeURIComponent(t.smsBody)}`, "🟩", t.wa));
-  if (INFO.backupPhone) box.append(btn(`tel:${tel(INFO.backupPhone)}`, "👤", `${t.backup}${INFO.backupName ? " · " + INFO.backupName : ""}`, INFO.backupPhone));
-  if (INFO.phone || INFO.email) {
-    const b = document.createElement("button");
-    b.className = "btn";
-    b.innerHTML = `<span class="ic">📇</span><span class="lbl">${t.save}</span>`;
-    b.onclick = vcard;
-    box.append(b);
-  }
+
+  const acts = $("acts"); acts.innerHTML = "";
+  if (INFO.phone) acts.append(act(`sms:${tel(INFO.phone)}?&body=${encodeURIComponent(t.smsBody)}`, I.sms, t.sms, "#5b6cff"));
+  if (INFO.whatsapp) acts.append(act(`https://wa.me/${INFO.whatsapp}?text=${encodeURIComponent(t.smsBody)}`, I.wa, t.wa, "var(--wa)"));
+  if (INFO.line) acts.append(act(`https://line.me/ti/p/~${encodeURIComponent(INFO.line)}`, I.line, t.line, "var(--line-green)"));
+  if (INFO.email) acts.append(act(`mailto:${INFO.email}?subject=${encodeURIComponent(t.mailSubj)}`, I.mail, t.mail, "#e8a33d"));
+  if (INFO.phone || INFO.email) { const b = act(null, I.save, t.save, "#1b2130"); b.onclick = vcard; acts.append(b); }
+
+  const rows = $("rows"); rows.innerHTML = "";
+  if (INFO.phone) rows.append(row(t.kPhone, INFO.phone, tel(INFO.phone)));
+  if (INFO.email) rows.append(row(t.kMail, INFO.email));
+  if (INFO.backupPhone) rows.append(row(t.kBackup, `${INFO.backupName ? INFO.backupName + " · " : ""}${INFO.backupPhone}`, tel(INFO.backupPhone)));
 }
 
-document.getElementById("langBtn").onclick = () => { lang = lang === "zh" ? "en" : "zh"; render(); };
+$("langBtn").onclick = () => { lang = lang === "zh" ? "en" : "zh"; render(); };
 render();
 </script>
 </body>
