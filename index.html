@@ -37,7 +37,7 @@
   /* ---------- 吊繩 + 吊牌 ---------- */
   .wrap { width: 100%; max-width: 400px; position: relative; padding-top: 46px;
     filter: drop-shadow(0 18px 28px rgba(27,33,48,.18)) drop-shadow(0 2px 3px rgba(27,33,48,.08));
-    animation: drop .7s cubic-bezier(.2,.9,.3,1.2) both; transform-origin: 50% 0; }
+    animation: drop 1.8s ease-out both; transform-origin: 50% 0; }
   .string { position: absolute; top: 0; left: 50%; width: 3px; height: 70px; margin-left: -1.5px;
     background: repeating-linear-gradient(180deg, #b98b54 0 4px, #9c7140 4px 8px); border-radius: 2px; z-index: 2; }
   .tag {
@@ -114,8 +114,10 @@
     opacity: 0; transition: .25s ease; pointer-events: none; }
   .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
-  @keyframes drop { 0% { opacity: 0; transform: translateY(-24px) rotate(-4deg); }
-    60% { opacity: 1; transform: translateY(0) rotate(1.5deg); } 100% { transform: rotate(0); } }
+  @keyframes drop { 0% { opacity: 0; transform: translateY(-24px) rotate(-14deg); }
+    18% { opacity: 1; transform: translateY(0) rotate(10deg); }
+    38% { transform: rotate(-6.5deg); } 56% { transform: rotate(4deg); }
+    72% { transform: rotate(-2deg); } 86% { transform: rotate(.8deg); } 100% { transform: rotate(0); } }
   @media (prefers-reduced-motion: reduce) { .wrap { animation: none; } }
 </style>
 </head>
